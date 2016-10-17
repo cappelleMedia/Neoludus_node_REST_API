@@ -1,0 +1,11 @@
+{
+  "mongo": {
+    "autoIndex": true,
+    "uri": "mongodb://localhost/neoludus",
+    "options": {
+      "server": {
+        "autoreconnect": true
+      }
+    }
+  }
+}
