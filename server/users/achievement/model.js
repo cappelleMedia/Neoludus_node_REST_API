@@ -2,7 +2,7 @@
  * Created by Jens on 15-Oct-16.
  */
 var mongoose = require("mongoose");
-var config = require("../config/index");
+var config = require("../../config/index");
 
 
 //MAIN

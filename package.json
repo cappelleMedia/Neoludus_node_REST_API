@@ -13,6 +13,7 @@
     "ansi": "0.3.x",
     "array-flatten": "1.1.x",
     "async": "2.0.x",
+    "bcrypt-nodejs": "0.0.3",
     "bluebird": "2.10.x",
     "body-parser": "^1.15.2",
     "bson": "0.5.x",
@@ -106,6 +107,7 @@
     "utils-merge": "1.0.x",
     "vary": "1.1.x",
     "winston": "^2.2.0",
-    "wordwrap": "0.0.x"
+    "wordwrap": "0.0.x",
+    "zxcvbn": "^4.4.0"
   }
 }

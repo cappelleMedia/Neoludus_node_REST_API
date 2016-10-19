@@ -2,7 +2,7 @@
  * Created by Jens on 11-Oct-16.
  */
 var mongoose = require("mongoose");
-var config = require("../config/index");
+var config = require("../../config/index");
 var UserHelp = require("./user-utils");
 var UserRole = require('../userrole/model');
 var Achievement = require('../achievement/model');
@@ -45,7 +45,7 @@ var UserSchema = new mongoose.Schema({
         required: true
     },
     creation: {
-        type:Date,
+        type: Date,
         required: true
     },
     lastLogin: {
@@ -105,21 +105,23 @@ UserSchema.path('username').validate = function (username) {
 };
 
 UserSchema.path('password').validate = function (password) {
-    return true;
-    //TODO password validations
+   return UserHelp.prototype.isValidPassword(password);
 };
 
+//PRE'S
+UserSchema.pre('save', function (done) {
+    if (this.isModified('password')) {
+        this.password = UserHelp.prototype.encryptPwd(this.password);
+    }
+    done();
+});
 
-//STATICS
-UserSchema.statics.findByUsername = function (username, callback) {
-    return this.findOne({username: new RegExp('^' + username + '$', 'i')}, callback);
-};
-
-UserSchema.statics.findByEmail = function (email, callback) {
-    return this.findOne({email: new RegExp('^' + email + '$', 'i')}, callback);
-};
+UserSchema.pre('update', function(done){
+   this.regKey = UserHelp.prototype.generateRegKey(64);
+    done();
+});
 
 //EXPORTS
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Model', UserSchema);
 
 module.exports.Schema = UserSchema;

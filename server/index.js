@@ -15,6 +15,7 @@ run();
 
 function connect() {
     winston.log('connecting to mongodb');
+    //TODO let winston log to files if error
     mongoose.Promise = global.Promise;
     mongoose.connect(config.mongo.uri, config.mongo.options);
     db = mongoose.connection;
@@ -29,17 +30,18 @@ function connect() {
 function run(){
     app = express();
 
-    var UserController = require('./user/routes')(app);
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+
+    require('./users/user/routes')(app);
+    require('./util/image/routes')(app);
 
     var server = app.listen(3001, function () {
         winston.info('Server running at http://localhost:3001');
     });
 
-
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
 
     connect();
     Populater.prototype.populate();
