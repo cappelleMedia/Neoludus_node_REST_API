@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var winston = require('winston');
 var bodyParser = require('body-parser');
 var Populater = require('./util/populater');
+var avatarController = require('./users/avatar/controller');
 
 var db;
 var app;
@@ -27,7 +28,7 @@ function connect() {
     });
 }
 
-function run(){
+function run() {
     app = express();
 
     app.use(bodyParser.json());
@@ -35,9 +36,9 @@ function run(){
         extended: true
     }));
 
-    require('./users/user/routes')(app);
-    require('./util/image/routes')(app);
-
+    require('./users/user/routes')(app, '/users');
+    require('./util/image/routes')(app, '/images');
+    require('./users/avatar/routes')(app, '/avatars');
     var server = app.listen(3001, function () {
         winston.info('Server running at http://localhost:3001');
     });
