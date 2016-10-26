@@ -35,6 +35,8 @@ class UserController extends BaseController {
                 BaseController.getResult(err, user, callback);
             });
     }
+
+    //populate!
 }
 
 module.exports = UserController;

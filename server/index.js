@@ -36,9 +36,7 @@ function run() {
         extended: true
     }));
 
-    require('./users/user/routes')(app, '/users');
-    require('./util/image/routes')(app, '/images');
-    require('./users/avatar/routes')(app, '/avatars');
+    require('./routes')(app);
     var server = app.listen(3001, function () {
         winston.info('Server running at http://localhost:3001');
     });

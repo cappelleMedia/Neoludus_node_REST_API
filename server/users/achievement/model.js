@@ -7,6 +7,11 @@ var config = require("../../config/index");
 
 //MAIN
 var AchievementSchema = new mongoose.Schema({
+    _image :{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Image',
+        required: true
+    },
     name :{
         type: String,
         required: true,
@@ -26,11 +31,6 @@ var AchievementSchema = new mongoose.Schema({
         type: Number,
         min:0,
         default: 0
-    },
-    image :{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Image',
-        required: true
     }
 }, {autoIndex: config.mongo.autoIndex, id: false, read: 'secondaryPreferred'});
 

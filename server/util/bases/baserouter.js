@@ -5,6 +5,11 @@ var helper = require('../routerHelper');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = function (app, base, Controller) {
+
+    app.get(base + '/ping', function (req, res) {
+        res.json({pong: Date.now()});
+    });
+
     app.post(base, function (req, res) {
         Controller.addObj(req.body, function (err, response) {
             helper.respond(err, response, res);

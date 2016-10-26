@@ -57,13 +57,13 @@ var UserSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    userRole: {
+    _userRole: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserRole',
         required: true,
         default: UserRole.findByFlag(1)
     },
-    avatar: {
+    _avatar: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Avatar',
         required: true,

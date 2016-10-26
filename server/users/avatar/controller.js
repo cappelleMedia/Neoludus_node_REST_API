@@ -1,7 +1,7 @@
 /**
  * Created by Jens on 19-Oct-16.
  */
-"user strict";
+"use strict";
 var BaseController = require('../../util/bases/basecontroller');
 // var ImageController = require('../../util/image/controller');
 var Model = require('./model');
@@ -44,7 +44,7 @@ class AvatarController extends BaseController {
     getAvatarsMaxTier(maxTier, callback) {
         this.model
             .find()
-            .populate('image')
+            .populate('_image')
             .where('tier').lte(maxTier)
             .sort('+tier')
             .exec(function (err, avatars) {
@@ -63,7 +63,7 @@ class AvatarController extends BaseController {
     getAvatarsStrictTier(tier, callback) {
         this.model
             .find()
-            .populate('image')
+            .populate('_image')
             .where('tier').equals(tier)
             .exec(function (err, avatars) {
                 if (err) {
@@ -80,7 +80,7 @@ class AvatarController extends BaseController {
 
     populateAvatar(err, avatar, callback) {
         if (!err && isNaN(avatar)) {
-            Model.populate(avatar, {path: 'image'}, function (err2, avatarPop) {
+            Model.populate(avatar, {path: '_image'}, function (err2, avatarPop) {
                 callback(err2, avatarPop);
             });
         } else {
