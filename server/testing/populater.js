@@ -2,32 +2,60 @@
  * Created by Jens on 17-Oct-16.
  */
 var UsersService = require('../users/user/model');
-var ImagesService = require('./image/model');
+var ImagesService = require('./../util/image/model');
 var AvatarsService = require('../users/avatar/model');
 var AchievementsService = require('../users/achievement/model');
 var UserRolesService = require('../users/userrole/model');
-var pathhelper = require('./pathHelper');
-
+var UserController = require('../users/user/controller');
+var userController = new UserController();
 var winston = require('winston');
 var async = require('async');
 
 function Populater() {
-
 }
 
 Populater.prototype.populate = function () {
-    ImagesService.findOne().exec(function (err, image) {
-        if (!image) populateImages();
-    });
-    AvatarsService.findOne().exec(function (err, avatar) {
-        if (!avatar) populateAvatars();
-    });
-    UserRolesService.findOne().exec(function (err, userRole) {
-        if (!userRole) populateUserRoles();
-    });
-    AchievementsService.findOne().exec(function (err, achievement) {
-        if (!achievement) populateAchievements();
-    });
+    async.waterfall([
+        function(next){
+            UsersService.remove({}, function(err){
+                next(null);
+            });
+        },
+        function (next) {
+            ImagesService.findOne().exec(function (err, image) {
+                if (!image) populateImages();
+                next(null);
+            });
+        },
+        function (next) {
+            AvatarsService.findOne().exec(function (err, avatar) {
+                if (!avatar) populateAvatars();
+                next(null);
+            });
+        },
+        function (next) {
+            UserRolesService.findOne().exec(function (err, userRole) {
+                if (!userRole) populateUserRoles();
+                next(null);
+            });
+        },
+        function (next) {
+            AchievementsService.findOne().exec(function (err, achievement) {
+                if (!achievement) populateAchievements();
+                next(null);
+            });
+        },
+        function (done) {
+            UsersService.findOne().exec(function (err, user) {
+                if (!user) populateUsers();
+                done(null);
+            });
+        }
+    ], function(err){
+        if(err){
+            winston.error(err);
+        }
+    })
 };
 
 function populateImages() {
@@ -116,6 +144,21 @@ function populateAvatars() {
 };
 
 function populateUserRoles() {
+    var notConfirmed = new UserRolesService({
+        displayName: 'Not Confirmed',
+        accessFlag: -999
+    });
+    notConfirmed.save();
+    var lifeBan = new UserRolesService({
+        displayName: 'Life Ban',
+        accessFlag: -998
+    });
+    lifeBan.save();
+    var bannished = new UserRolesService({
+        displayName: 'Banished',
+        accessFlag: -1
+    });
+    bannished.save();
     var noob = new UserRolesService({
         displayName: 'Noob',
         accessFlag: 1
@@ -226,6 +269,96 @@ function populateAchievements() {
         });
 };
 
+function populateUsers() {
+    try {
+        //createAdmin(999, 'jens_admin', 'jens@ips.be', 'DevAdmin001*');
+        createUser('jens_regular', 'jens@ips.be');
+    } catch (err) {
+        if (err) {
+            winston.error(err);
+        }
+    }
+}
+
+function createAdmin(name, mail, pwd) {
+    async.parallel({
+            userrole: function (callback) {
+                UserRolesService
+                    .findOne({accessFlag: 999})
+                    .exec(function (err, userrole) {
+                        callback(err, userrole);
+                    });
+            },
+            avatar: function (callback) {
+                AvatarsService
+                    .findOne()
+                    .exec(function (err, avatar) {
+                        callback(err, avatar);
+                    });
+            }
+        },
+        function (err, results) {
+            if (err) {
+                winston.info('Admin not added');
+                winston.error(err);
+            } else {
+                try {
+                    var admin = new UsersService({
+                        username: name,
+                        email: mail,
+                        password: pwd,
+                        dateTimePref: 'dd/mm/yyyy',
+                        _userRole: results.userrole,
+                        _avatar: results.avatar
+                    });
+                    admin.save();
+                    winston.info('admin added');
+                } catch (err) {
+                    winston.info('admin not added');
+                    winston.error(err);
+                }
+            }
+        });
+}
+
+function createUser(name, mail) {
+    async.parallel({
+            avatar: function (callback) {
+                AvatarsService
+                    .findOne()
+                    .exec(function (err, avatar) {
+                        callback(err, avatar);
+                    });
+            }
+        },
+        function (err, results) {
+            if (err) {
+                winston.info(name + ' not added');
+                winston.error(err);
+            } else {
+                try {
+                    var user = {
+                        "username": name,
+                        "email": mail,
+                        "dateTimePref": "dd/mm/yyyy",
+                        "_avatar": results.avatar._id
+                    }
+                    userController.addObj(user, function (err, userRes) {
+                        if (err) {
+                            winston.info(name + ' not added');
+                            winston.error(err);
+                        } else {
+                            winston.info(name + ' added');
+                        }
+                    })
+                } catch (err) {
+                    winston.info(name + ' not added at error caught');
+                    winston.error(err);
+                }
+            }
+        });
+}
+
 function addImages(asset) {
     let fileI = 0;
     let img = new ImagesService({
@@ -261,5 +394,6 @@ function addImages(asset) {
     img4.save();
     fileI++;
 }
+
 
 module.exports = Populater;

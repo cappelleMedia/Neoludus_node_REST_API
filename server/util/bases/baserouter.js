@@ -40,6 +40,7 @@ module.exports = function (app, base, Controller) {
     });
 
     app.put(base + '/:id', function (req, res) {
+        //TODO CHECK FOR AUTHENTICATIONS (admin credentials)
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
             helper.respond(null, 400, res, '/' + req.params.id + '/' + ' is not a valid id');
@@ -51,6 +52,7 @@ module.exports = function (app, base, Controller) {
     });
 
     app.delete(base + '/:id', function (req, res) {
+        //TODO CHECK FOR AUTHENTICATIONS (admin credentials)
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
             helper.respond(null, 400, res, '/' + req.params.id + '/' + ' is not a valid id');

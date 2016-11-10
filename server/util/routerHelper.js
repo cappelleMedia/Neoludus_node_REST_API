@@ -13,6 +13,6 @@ module.exports.respond = function respond(err, response, res, errMsg) {
             res.status(response).json({errMsg});
         }
     } else {
-        res.status(500).end();
+        res.sendStatus(500);
     }
 }

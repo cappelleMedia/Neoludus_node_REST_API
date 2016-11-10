@@ -6,12 +6,12 @@ var winston = require('winston');
 var helper = require('../../util/routerHelper');
 
 module.exports = function (app, base) {
-    var Controller = new ControllerClass();
+    var controller = new ControllerClass();
     app.get(base + '/max-tier/:tier', function (req, res) {
         if (!req.params.tier || isNaN(req.params.tier)) {
             helper.respond(null, 400, res, 'tier was missing or is not a number');
         } else {
-            Controller.getAvatarsMaxTier(parseInt(req.params.tier), function (err, response) {
+            controller.getAvatarsMaxTier(parseInt(req.params.tier), function (err, response) {
                 helper.respond(err, response, res);
             });
         }
@@ -20,10 +20,10 @@ module.exports = function (app, base) {
         if (!req.params.tier || isNaN(req.params.tier)) {
             helper.respond(null, 400, res, 'tier was missing or is not a number');
         } else {
-            Controller.getAvatarsStrictTier(parseInt(req.params.tier), function (err, response) {
+            controller.getAvatarsStrictTier(parseInt(req.params.tier), function (err, response) {
                 helper.respond(err, response, res);
             });
         }
     });
-    require('../../util/bases/baserouter')(app, base, Controller);
+    require('../../util/bases/baserouter')(app, base, controller);
 };

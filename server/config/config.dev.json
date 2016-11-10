@@ -9,10 +9,20 @@
     }
   },
   "basepaths": {
+    "siteUrl": "localhost:3001",
     "achievements": "assets/images/achievements",
     "avatars": "assets/images/avatar",
     "designs": "assets/images/designs",
     "newsfeed": "assets/images/newsfeed",
     "reviews": "assets/images/reviews"
+  },
+  "smtpConfig": {
+    "port": "1025",
+    "ignoreTLS": true,
+    "debug": true
+  },
+  "cors": {
+    "exposedHeaders" : ["X-Total-Count"],
+    "origins": ["localhost:3000$"]
   }
 }

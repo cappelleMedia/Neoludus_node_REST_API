@@ -6,17 +6,17 @@ var config = require('./config');
 var mongoose = require('mongoose');
 var winston = require('winston');
 var bodyParser = require('body-parser');
-var Populater = require('./util/populater');
-var avatarController = require('./users/avatar/controller');
-
+var Populater = require('./testing/populater');
+var Mail = require('./util/mailing/mailer');
+var path = require('path');
+var cors = require('cors');
 var db;
 var app;
+var mail;
 
 run();
 
 function connect() {
-    winston.log('connecting to mongodb');
-    //TODO let winston log to files if error
     mongoose.Promise = global.Promise;
     mongoose.connect(config.mongo.uri, config.mongo.options);
     db = mongoose.connection;
@@ -26,10 +26,25 @@ function connect() {
     db.once('open', function () {
         winston.info('Connected to mongodb!');
     });
+    if (process.env.NODE_ENV !== 'production') {
+        devSetup();
+    }
 }
 
 function run() {
+    mail = new Mail();
     app = express();
+    app.set('view engine', 'ejs');
+    var http = require('http').Server(app);
+    var io = require('socket.io')(http);
+
+    app.use(cors({
+        exposedHeaders: config.cors.exposedHeaders, origin: config.cors.origins.map(function (origin) {
+            return new RegExp(origin);
+        })
+    }));
+
+    app.use(express.static(path.join(__dirname, '../client')));
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
@@ -44,4 +59,25 @@ function run() {
 
     connect();
     Populater.prototype.populate();
+
+    // testing();
+}
+
+function devSetup() {
+    var mailListener = require('./testing/mail/mailTesting')();
+}
+
+function testing() {
+    var mailOptions = {
+        from: 'info@neoludus.com',
+        to: 'jens@itprosolutions.com',
+        subject: 'testing',
+        text: 'This is a test'
+    }
+    mail.verifyConnection();
+    mail.sendEmail(mailOptions, function (err) {
+        if (err) {
+            winston.error(err);
+        }
+    });
 }

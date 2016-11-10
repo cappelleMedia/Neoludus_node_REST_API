@@ -6,16 +6,16 @@ var BaseController = require('../bases/basecontroller');
 var Model = require('./model');
 
 class ImageController extends BaseController {
-    constructor(model = Model){
+    constructor(model = Model) {
         super(model);
     }
 
-    getImageByFileName(filename, callback){
+    getImageByFileName(filename, callback) {
         this.model
             .findOne({filename: filename})
-        .exec(function (err, img) {
-            BaseController.getResult(err, img, callback);
-        });
+            .exec(function (err, img) {
+                BaseController.getResult(err, img, callback);
+            });
     }
 }
 module.exports = ImageController;

@@ -46,11 +46,13 @@ var UserSchema = new mongoose.Schema({
     },
     creation: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now()
     },
     lastLogin: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now()
     },
     activeTime: {
         type: Number,
@@ -58,10 +60,9 @@ var UserSchema = new mongoose.Schema({
         default: 0
     },
     _userRole: {
-        type: mongoose.Schema.Types.ObjectId,
+        type:  mongoose.Schema.Types.ObjectId,
         ref: 'UserRole',
-        required: true,
-        default: UserRole.findByFlag(1)
+        required: true
     },
     _avatar: {
         type: mongoose.Schema.Types.ObjectId,
@@ -122,6 +123,6 @@ UserSchema.pre('update', function(done){
 });
 
 //EXPORTS
-module.exports = mongoose.model('Model', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
 
 module.exports.Schema = UserSchema;

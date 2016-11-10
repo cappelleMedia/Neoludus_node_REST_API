@@ -14,28 +14,28 @@ class AvatarController extends BaseController {
     addObj(data, callback) {
         //FIXME add 'save image' first here?
         //IF an avatar with this image already exists -> tell it already is present
-        var me = this;
+        let me = this;
         super.addObj(data, function (err, avatar) {
             me.populateAvatar(err, avatar, callback);
         });
     }
 
     getAll(limit, skip, callback) {
-        var me = this;
+        let me = this;
         super.getAll(limit, skip, function (err, avatars) {
             me.populateAvatar(err, avatars, callback);
         });
     }
 
     getOne(id, callback) {
-        var me = this;
+        let me = this;
         super.getOne(id, function (err, avatar) {
             me.populateAvatar(err, avatar, callback);
         });
     }
 
     updateObj(id, updated, callback) {
-        var me = this;
+        let me = this;
         super.updateObj(id, updated, function (err, avatar) {
             me.populateAvatar(err, avatar, callback);
         });
