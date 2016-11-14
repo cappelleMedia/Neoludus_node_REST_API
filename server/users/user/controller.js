@@ -3,7 +3,6 @@
  */
 "use strict"
 var BaseController = require('../../util/bases/basecontroller');
-var UserRoleService = require('../userrole/model');
 var Model = require('./model');
 var Mailer = require('../../util/mailing/mailer');
 var async = require('async');
@@ -19,14 +18,8 @@ class UserController extends BaseController {
         let me = this;
         async.waterfall([
             function (next) {
-                UserRoleService.findOne({accessFlag: -999})
-                    .exec(function (err, role) {
-                        next(err, role);
-                    });
-            },
-            function (userrole, next) {
                 var newUser = null;
-                data._userRole = userrole._id;
+                data.accessFlag = -999;
                 newUser = new Model(data);
 
                 newUser.save(function (err) {
@@ -54,10 +47,8 @@ class UserController extends BaseController {
             if (err) {
                 Model.findByIdAndRemove(user._id).exec(function (err) {
                 });
-                callback(err, user);
-            } else {
-                me.populateUser(err, user, callback);
             }
+            callback(err, user);
         });
     }
 
@@ -71,19 +62,6 @@ class UserController extends BaseController {
         return callback(null, 501);
     }
 
-    getAll(limit, skip, callback) {
-        let me = this;
-        super.getAll(limit, skip, function (err, users) {
-            me.populateUser(err, users, callback);
-        });
-    }
-
-    getOne(id, callback) {
-        let me = this;
-        super.getOne(id, function (err, user) {
-            me.populateUser(err, user, callback);
-        });
-    }
 
     getUserByName(username, callback) {
         this.model
@@ -99,30 +77,6 @@ class UserController extends BaseController {
             .exec(function (err, user) {
                 BaseController.getResult(err, user, callback);
             });
-    }
-
-    populateUser(err, user, callback) {
-        if (!err && isNaN(user)) {
-            Model
-                .populate(user, [
-                    {
-                        path: '_avatar',
-                        model: 'Avatar',
-                        populate: {
-                            path: '_image',
-                            model: 'Image'
-                        }
-                    },
-                    {
-                        path: '_userRole',
-                        model: 'UserRole'
-                    }
-                ], function (err2, userPop) {
-                    callback(err2, userPop);
-                })
-        } else {
-            callback(err, user);
-        }
     }
 
 }

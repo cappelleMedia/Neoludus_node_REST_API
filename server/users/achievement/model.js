@@ -7,9 +7,8 @@ var config = require("../../config/index");
 
 //MAIN
 var AchievementSchema = new mongoose.Schema({
-    _image :{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Image',
+    imageUrl :{
+        type:String,
         required: true
     },
     name :{

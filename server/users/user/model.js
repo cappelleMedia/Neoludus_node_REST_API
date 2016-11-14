@@ -4,7 +4,6 @@
 var mongoose = require("mongoose");
 var config = require("../../config/index");
 var UserHelp = require("./user-utils");
-var UserRole = require('../userrole/model');
 var Achievement = require('../achievement/model');
 
 //MAIN
@@ -59,15 +58,13 @@ var UserSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    _userRole: {
-        type:  mongoose.Schema.Types.ObjectId,
-        ref: 'UserRole',
+    accessFlag: {
+        type: Number,
         required: true
     },
-    _avatar: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Avatar',
-        required: true,
+    avatarUrl: {
+        type: String,
+        required: true
     },
     achievements: {
         type: [Achievement.Schema]
