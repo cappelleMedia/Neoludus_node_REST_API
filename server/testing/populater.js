@@ -14,11 +14,11 @@ function Populater() {
 
 Populater.prototype.populate = function () {
     async.waterfall([
-        function (next) {
-            UsersService.remove({}, function (err) {
-                next(null);
-            });
-        },
+        // function (next) {
+        //     UsersService.remove({}, function (err) {
+        //         next(null);
+        //     });
+        // },
         function (next) {
             UserRolesService.findOne().exec(function (err, userRole) {
                 if (!userRole) populateUserRoles();
@@ -39,7 +39,7 @@ Populater.prototype.populate = function () {
         }
     ], function (err) {
         if (err) {
-            winston.error(err);
+            handleError(err);
         }
     })
 };
@@ -139,7 +139,7 @@ function populateAchievements() {
         function (err) {
             if (err) {
                 winston.info('achievements not populated');
-                winston.error(err);
+                handleError(err);
             } else {
                 winston.info('achievements populated');
             }
@@ -150,9 +150,10 @@ function populateUsers() {
     try {
         //createAdmin(999, 'jens_admin', 'jens@ips.be', 'DevAdmin001*');
         createUser('jens_regular', 'jens@ips.be');
+        // createUser('jens_regular2', 'jens2@ips.be');
     } catch (err) {
         if (err) {
-            winston.error(err);
+            handleError(err);
         }
     }
 }
@@ -171,7 +172,7 @@ function createAdmin(name, mail, pwd) {
         winston.info('admin added');
     } catch (err) {
         winston.info('admin not added');
-        winston.error(err);
+        handleError(err);
     }
 
 }
@@ -184,19 +185,24 @@ function createUser(name, mail) {
             "dateTimePref": "dd/mm/yyyy",
             "avatarUrl": "tier1/avatar1.png"
         }
-        userController.addObj(user, function (err, userRes) {
+        userController.registerUser(user, function (err, userRes) {
             if (err) {
                 winston.info(name + ' not added');
-                winston.error(err);
+                handleError(err);
             } else {
                 winston.info(name + ' added');
             }
         })
     } catch (err) {
         winston.info(name + ' not added at error caught');
-        winston.error(err);
+        handleError(err);
     }
 }
 
+function handleError(err) {
+    winston.error('populater error');
+    winston.error(err.message);
+    // console.log(err);
+}
 
 module.exports = Populater;

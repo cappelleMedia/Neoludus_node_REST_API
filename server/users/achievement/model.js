@@ -15,6 +15,7 @@ var AchievementSchema = new mongoose.Schema({
         type: String,
         required: true,
         index: true,
+        sparse: true,
         unique: true
     },
     description : {
@@ -32,7 +33,6 @@ var AchievementSchema = new mongoose.Schema({
         default: 0
     }
 }, {autoIndex: config.mongo.autoIndex, id: false, read: 'secondaryPreferred'});
-
 module.exports = mongoose.model('Achievement', AchievementSchema);
 
 module.exports.Schema = AchievementSchema;

@@ -3,7 +3,7 @@
  */
 module.exports = function (app) {
     //api routes
-    let base = '/api/';
+    let base = '/api/v1/';
     require('./users/user/routes')(app, base + 'users');
     require('./users/achievement/routes')(app, base + 'achievements');
     require('./users/userrole/routes')(app, base + 'userroles');

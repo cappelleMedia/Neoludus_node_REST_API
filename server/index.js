@@ -15,7 +15,6 @@ var app;
 var mail;
 
 run();
-
 function connect() {
     mongoose.Promise = global.Promise;
     mongoose.connect(config.mongo.uri, config.mongo.options);

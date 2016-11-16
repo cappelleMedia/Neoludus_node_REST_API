@@ -6,17 +6,21 @@ var Model = require('./model');
 
 class UserRoleController extends BaseController {
 
-    constructor(model = Model){
+    constructor(model = Model) {
         super(model);
     }
 
-    getByFlag(flag, callback){
+    getByFlag(flag, callback) {
         this.model
-            .findOne({accessFlag : flag})
-            .exec(function(err, userrole){
+            .findOne({accessFlag: flag})
+            .exec(function (err, userrole) {
                 BaseController.getResult(err, userrole, callback);
             });
     }
+
+    // handleValidationErrors() {
+    //
+    // }
 }
 
 module.exports = UserRoleController;

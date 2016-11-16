@@ -15,7 +15,8 @@ var UserRoleSchema = new mongoose.Schema({
     },
     accessFlag: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     },
     minKp: {
         type: Number,

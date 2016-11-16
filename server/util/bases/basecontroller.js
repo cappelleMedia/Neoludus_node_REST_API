@@ -8,13 +8,18 @@ class BaseController {
     }
 
     addObj(data, callback) {
-        var newObj = null;
+        let me = this;
+        let validationErrors = "";
+        let newObj = null;
         newObj = new this.model(data);
         newObj.save(function (err) {
             if (err) {
-                return callback(err, 400);
+                if(err.name === 'ValidationError'){
+                    validationErrors = me.handleValidationErrors(err);
+                }
+                return callback(err, 400, validationErrors);
             }
-            callback(err, newObj);
+            callback(err, newObj, null);
         });
     }
 
@@ -45,14 +50,20 @@ class BaseController {
     }
 
     updateObj(id, updated, callback) {
-        var me = this;
+        let me = this;
         this.getOne(id, function (err, found) {
             if (!isNaN(found)) {
                 callback(err, found);
             } else {
                 Object.assign(found, updated);
                 me.addObj(found, function (err, result) {
-                    callback(err, result);
+                    let errors = null;
+                    if (err) {
+                        if (err.name === "ValidationError") {
+                            errors = me.handleValidationErrors(err);
+                        }
+                    }
+                    callback(err, result, errors);
                 });
             }
         });
@@ -64,6 +75,11 @@ class BaseController {
             .exec(function (err) {
                 callback(err, id);
             });
+    }
+
+    handleValidationErrors(err){
+        //should be overwritten by all subs
+        throw TypeError('not implemented, should be implemented by subclass');
     }
 
     static getResult(err, value, callback) {

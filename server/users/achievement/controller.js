@@ -10,6 +10,9 @@ class AchievementController extends BaseController {
     constructor(model = Model) {
         super(model);
     }
+
+    // handleValidationErrors(){
+    // }
 }
 
 module.exports = AchievementController;

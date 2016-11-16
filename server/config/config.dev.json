@@ -9,7 +9,8 @@
     }
   },
   "basepaths": {
-    "siteUrl": "localhost:3001",
+    "serverUrl": "localhost:3001",
+    "clientUrl" : "localhost:3000",
     "achievements": "assets/images/achievements",
     "avatars": "assets/images/avatar",
     "designs": "assets/images/designs",
@@ -24,5 +25,12 @@
   "cors": {
     "exposedHeaders" : ["X-Total-Count"],
     "origins": ["localhost:3000$"]
+  },
+  "jwt" : {
+    "activation": {
+      "expiresIn": "1h",
+      "issuer": "neoludus:activation",
+      "secret": ">PQo6b3^9gMH8MJcw%Pv:H9D"
+    }
   }
 }

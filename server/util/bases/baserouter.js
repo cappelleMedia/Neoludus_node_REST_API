@@ -11,14 +11,14 @@ module.exports = function (app, base, Controller) {
     });
 
     app.post(base, function (req, res) {
-        Controller.addObj(req.body, function (err, response) {
-            helper.respond(err, response, res);
+        Controller.registerUser(req.body, function (err, response, validationResult) {
+            helper.respond(err, response, res, validationResult);
         });
     });
 
     app.get(base, function (req, res) {
-        Controller.getAll(0, 0, function (err, response) {
-            helper.respond(err, response, res);
+        Controller.getAll(0, 0, function (err, response, errors) {
+            helper.respond(err, response, res, errors);
         });
     });
 
@@ -31,7 +31,7 @@ module.exports = function (app, base, Controller) {
     app.get(base + '/:id', function (req, res) {
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
-            helper.respond(null, 400, res, '/' + req.params.id + '/' + ' is not a valid id');
+            helper.respond(null, 500, res, {'dev': '/' + req.params.id + '/' + ' is not a valid id'});
         } else {
             Controller.getOne(req.params.id, function (err, response) {
                 helper.respond(err, response, res);
@@ -43,19 +43,21 @@ module.exports = function (app, base, Controller) {
         //TODO CHECK FOR AUTHENTICATIONS (admin credentials)
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
-            helper.respond(null, 400, res, '/' + req.params.id + '/' + ' is not a valid id');
-        } else {
-            Controller.updateObj(req.params.id, req.body, function (err, response) {
-                helper.respond(err, response, res);
+            helper.respond(null, 500, res, {'dev': '/' + req.params.id + '/' + ' is not a valid id'});
+        }
+        else {
+            Controller.updateObj(req.params.id, req.body, function (err, response, validationResult) {
+                helper.respond(err, response, res, validationResult);
             });
         }
-    });
+    })
+    ;
 
     app.delete(base + '/:id', function (req, res) {
         //TODO CHECK FOR AUTHENTICATIONS (admin credentials)
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
-            helper.respond(null, 400, res, '/' + req.params.id + '/' + ' is not a valid id');
+            helper.respond(null, 500, res, {'dev': '/' + req.params.id + '/' + ' is not a valid id'});
         } else {
             Controller.deleteObj(req.params.id, function (err, response) {
                 helper.respond(err, response, res);
