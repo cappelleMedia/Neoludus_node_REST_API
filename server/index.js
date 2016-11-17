@@ -6,7 +6,7 @@ var config = require('./config');
 var mongoose = require('mongoose');
 var winston = require('winston');
 var bodyParser = require('body-parser');
-var Populater = require('./testing/populater');
+var Populater = require('./dev/populater');
 var Mail = require('./util/mailing/mailer');
 var path = require('path');
 var cors = require('cors');
@@ -59,11 +59,11 @@ function run() {
     connect();
     Populater.prototype.populate();
 
-    // testing();
+    // dev();
 }
 
 function devSetup() {
-    var mailListener = require('./testing/mail/mailTesting')();
+    var mailListener = require('./dev/mail/mailTesting')();
 }
 
 function testing() {
