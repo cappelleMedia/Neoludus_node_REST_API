@@ -1,8 +1,8 @@
 /**
  * Created by Jens on 19-Oct-16.
  */
-var helper = require('../routerHelper');
-var ObjectId = require('mongoose').Types.ObjectId;
+const helper = require('../routerHelper');
+const objectId = require('mongoose').Types.ObjectId;
 
 module.exports = function (app, base, Controller) {
 
@@ -40,7 +40,6 @@ module.exports = function (app, base, Controller) {
     });
 
     app.put(base + '/:id', function (req, res) {
-        //TODO CHECK FOR AUTHENTICATIONS (admin credentials)
         if (!req.params.id || !isValidObjId(req.params.id)) {
             //TO HELP DEVELOPERS DEBUG
             helper.respond(null, 500, res, {'dev': '/' + req.params.id + '/' + ' is not a valid id'});
@@ -59,16 +58,17 @@ module.exports = function (app, base, Controller) {
             //TO HELP DEVELOPERS DEBUG
             helper.respond(null, 500, res, {'dev': '/' + req.params.id + '/' + ' is not a valid id'});
         } else {
-            Controller.deleteObj(req.params.id, function (err, response) {
+            Controller.deleteObj(req.params.id, req.body.token,function (err, response) {
                 helper.respond(err, response, res);
             });
         }
     });
 };
 
+//FIXME VALIDATOR PLUGIN CAN TEST THIS TOO
 function isValidObjId(id) {
     try {
-        var validId = new ObjectId(id);
+        var validId = new objectId(id);
         if (id === validId.toString()) {
             return true;
         }

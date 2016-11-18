@@ -10,7 +10,7 @@
   },
   "basepaths": {
     "serverUrl": "localhost:3001",
-    "clientUrl" : "localhost:3000",
+    "clientUrl": "localhost:3000",
     "achievements": "assets/images/achievements",
     "avatars": "assets/images/avatar",
     "designs": "assets/images/designs",
@@ -23,14 +23,39 @@
     "debug": true
   },
   "cors": {
-    "exposedHeaders" : ["X-Total-Count"],
-    "origins": ["localhost:3000$"]
+    "exposedHeaders": [
+      "X-Total-Count"
+    ],
+    "origins": [
+      "localhost:3000$"
+    ]
   },
-  "jwt" : {
+  "jwt": {
     "activation": {
       "expiresIn": "1h",
       "issuer": "neoludus:activation",
       "secret": ">PQo6b3^9gMH8MJcw%Pv:H9D"
+    },
+    "auth": {
+      "expiresIn": "1h",
+      "issuer": "neoludus:auth",
+      "secret": ">PQo6b3^9gMH8MJcw%Pv:H9D"
     }
+  },
+  "validationConfig": {
+    "usernameMinLength": 4,
+    "usernameMaxLength": 15,
+    "reservedUsernames": [
+      "admin",
+      "super",
+      "root",
+      "jens",
+      "souf"
+    ],
+    "dateTimePrefs": [
+      "dd/mm/yyyy",
+      "mm/dd/yyyy",
+      "yyyy/mm/dd"
+    ]
   }
 }

@@ -1,8 +1,8 @@
 /**
  * Created by Jens on 26-Oct-16.
  */
-var mongoose = require('mongoose');
-var config = require('../../config/index');
+const mongoose = require('mongoose');
+const config = require('../../config/index');
 
 // var NotificationSchema = new mongoose.Schema({
 //     _recipient: {

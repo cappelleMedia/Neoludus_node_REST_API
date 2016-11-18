@@ -2,14 +2,14 @@
  * Created by Jens on 27-Oct-16.
  */
 "use strict";
-var NodeMailer = require('nodemailer');
-var config = require('../../config/index');
-var winston = require('winston');
-var EmailTemplate = require('email-templates');
-var path = require('path');
+const emailTemplates = require('email-templates');
+const NodeMailer = require('nodemailer');
+const winston = require('winston');
+const path = require('path');
 
-var templatesBaseDir = path.join(__dirname, 'templates');
-var defaultFrom = 'info@neoludus.com';
+const config = require('../../config/index');
+const templatesBaseDir = path.join(__dirname, 'templates');
+// const defaultFrom = 'info@neoludus.com';
 
 class Mailer {
     constructor() {
@@ -37,9 +37,9 @@ class Mailer {
     }
 
     sendFromTemplate(type, mailOpt, callback) {
-        let emailTemplate = EmailTemplate.EmailTemplate;
+        let emailTemplate = emailTemplates.EmailTemplate;
         let me = this;
-        var templateDir = this.getTemplateDir(type, mailOpt);
+        let templateDir = this.getTemplateDir(type, mailOpt);
         if (templateDir) {
             let template = new emailTemplate(templateDir);
             template.render(mailOpt, function (err, results) {
@@ -68,9 +68,8 @@ class Mailer {
             case 'activation':
                 if (this.checkRequiredFields(type, options)) {
                     return templatesBaseDir + '/activation';
-                } else {
-                    return false;
                 }
+                return false;
             default:
                 return 'template not found';
         }
@@ -79,7 +78,7 @@ class Mailer {
     checkRequiredFields(type, options) {
         switch (type) {
             case 'activation':
-                return options.activationUrl ? true : false;
+                return !!options.activationUrl;
             default:
                 return false;
         }

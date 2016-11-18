@@ -31,6 +31,7 @@
     "zxcvbn": "^4.4.0"
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
     "jasmine": "^2.5.2",
     "jasmine-expect": "^3.0.1"
   }

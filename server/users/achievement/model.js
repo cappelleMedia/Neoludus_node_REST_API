@@ -1,12 +1,12 @@
 /**
  * Created by Jens on 15-Oct-16.
  */
-var mongoose = require("mongoose");
-var config = require("../../config/index");
+const mongoose = require("mongoose");
+const config = require("../../config/index");
 
 
 //MAIN
-var AchievementSchema = new mongoose.Schema({
+let AchievementSchema = new mongoose.Schema({
     imageUrl :{
         type:String,
         required: true

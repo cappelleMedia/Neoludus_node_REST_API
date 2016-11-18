@@ -1,7 +1,8 @@
 /**
  * Created by Jens on 19-Oct-16.
  */
-var winston = require('winston');
+const winston = require('winston');
+
 module.exports.respond = function respond(err, response, res, errors) {
     if (err) {
         handleError(err);
@@ -23,6 +24,10 @@ module.exports.respond = function respond(err, response, res, errors) {
 
 function handleError(err) {
     winston.error('routerHelper error');
-    winston.error(err.message);
+    if (isNaN(err)) {
+        winston.error(err.message);
+    } else {
+        winston.error(err);
+    }
     // console.log(err);
 }

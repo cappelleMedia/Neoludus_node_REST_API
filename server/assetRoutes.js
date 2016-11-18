@@ -1,10 +1,12 @@
 /**
  * Created by Jens on 31-Oct-16.
  */
-var pathHelper = require('path');
-var winston = require('winston');
-var baseDir = pathHelper.join(__dirname, '/assets/');
-var base = '/assets/'
+const pathHelper = require('path');
+const winston = require('winston');
+
+const base = '/assets/'
+const baseDir = pathHelper.join(__dirname, base);
+
 module.exports = function (app) {
     app.get(base + 'images/:name', function (req, res) {
         let baseExtend = baseDir + 'images/design/';
@@ -12,12 +14,12 @@ module.exports = function (app) {
             root: baseExtend,
             headers: {
                 'x-timestamp': Date.now(),
-                'x-sent':true
+                'x-sent': true
             }
         };
         let filename = req.params.name;
-        res.sendFile(filename, options, function(err){
-            if(err){
+        res.sendFile(filename, options, function (err) {
+            if (err) {
                 winston.error(err);
                 res.sendStatus(404);
             } else {

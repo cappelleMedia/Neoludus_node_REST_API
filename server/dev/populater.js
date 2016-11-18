@@ -1,18 +1,20 @@
 /**
  * Created by Jens on 17-Oct-16.
  */
-var UsersService = require('../users/user/model');
-var AchievementsService = require('../users/achievement/model');
-var UserRolesService = require('../users/userrole/model');
-var UserController = require('../users/user/controller');
-var userController = new UserController();
-var winston = require('winston');
-var async = require('async');
+const winston = require('winston');
+const async = require('async');
+
+const UserModel = require('../users/user/model');
+const AchievementModel = require('../users/achievement/model');
+const UserRoleModel = require('../users/userrole/model');
+const UserController = require('../users/user/controller');
+
+let userController = new UserController();
 
 function Populater() {
 }
 
-Populater.prototype.populate = function () {
+Populater.prototype.populate = function (cb) {
     async.waterfall([
         // function (next) {
         //     UsersService.remove({}, function (err) {
@@ -20,19 +22,19 @@ Populater.prototype.populate = function () {
         //     });
         // },
         function (next) {
-            UserRolesService.findOne().exec(function (err, userRole) {
+            UserRoleModel.findOne().exec(function (err, userRole) {
                 if (!userRole) populateUserRoles();
                 next(null);
             });
         },
         function (next) {
-            AchievementsService.findOne().exec(function (err, achievement) {
+            AchievementModel.findOne().exec(function (err, achievement) {
                 if (!achievement) populateAchievements();
                 next(null);
             });
         },
         function (done) {
-            UsersService.findOne().exec(function (err, user) {
+            UserModel.findOne().exec(function (err, user) {
                 if (!user) populateUsers();
                 done(null);
             });
@@ -41,39 +43,42 @@ Populater.prototype.populate = function () {
         if (err) {
             handleError(err);
         }
+        if (cb) {
+            cb();
+        }
     })
 };
 
 function populateUserRoles() {
-    var notConfirmed = new UserRolesService({
+    let notConfirmed = new UserRoleModel({
         displayName: 'Not Confirmed',
         accessFlag: -999
     });
     notConfirmed.save();
-    var lifeBan = new UserRolesService({
+    let lifeBan = new UserRoleModel({
         displayName: 'Life Ban',
         accessFlag: -998
     });
     lifeBan.save();
-    var bannished = new UserRolesService({
+    let bannished = new UserRoleModel({
         displayName: 'Banished',
         accessFlag: -1
     });
     bannished.save();
-    var noob = new UserRolesService({
+    let noob = new UserRoleModel({
         displayName: 'Noob',
         accessFlag: 1
     });
     noob.save();
 
-    var freshman = new UserRolesService({
+    let freshman = new UserRoleModel({
         displayName: 'Freshman',
         accessFlag: 2,
         minKp: 100
     });
     freshman.save();
 
-    var admin = new UserRolesService({
+    let admin = new UserRoleModel({
         displayName: 'Admin',
         accessFlag: 999,
         minKp: 999999,
@@ -84,11 +89,10 @@ function populateUserRoles() {
 };
 
 function populateAchievements() {
-    let asset = 'achievements';
     let fileI = 0;
     async.waterfall([
             function (callback) {
-                var achievement = new AchievementsService({
+                let achievement = new AchievementModel({
                     imageUrl: 'achievements/achievement' + fileI,
                     name: 'achievement' + fileI,
                     description: 'desc',
@@ -100,7 +104,7 @@ function populateAchievements() {
                 callback(null);
             },
             function (callback) {
-                var achievement = new AchievementsService({
+                let achievement = new AchievementModel({
                     imageUrl: 'achievements/achievement' + fileI,
                     name: 'achievement' + fileI,
                     description: 'desc',
@@ -112,7 +116,7 @@ function populateAchievements() {
                 callback(null);
             },
             function (callback) {
-                var achievement = new AchievementsService({
+                let achievement = new AchievementModel({
                     imageUrl: 'achievements/achievement' + fileI,
                     name: 'achievement' + fileI,
                     description: 'desc',
@@ -124,7 +128,7 @@ function populateAchievements() {
                 callback(null);
             },
             function (callback) {
-                var achievement = new AchievementsService({
+                let achievement = new AchievementModel({
                     imageUrl: 'achievements/achievement' + fileI,
                     name: 'achievement' + fileI,
                     description: 'desc',
@@ -148,9 +152,8 @@ function populateAchievements() {
 
 function populateUsers() {
     try {
-        //createAdmin(999, 'jens_admin', 'jens@ips.be', 'DevAdmin001*');
+        createAdmin('devAdmin', 'jens@itprosolutions.be', 'DevAdmin001*');
         createUser('jens_regular', 'jens@ips.be');
-        // createUser('jens_regular2', 'jens2@ips.be');
     } catch (err) {
         if (err) {
             handleError(err);
@@ -160,7 +163,7 @@ function populateUsers() {
 
 function createAdmin(name, mail, pwd) {
     try {
-        var admin = new UsersService({
+        let admin = new UserModel({
             username: name,
             email: mail,
             password: pwd,
@@ -168,8 +171,13 @@ function createAdmin(name, mail, pwd) {
             accessFlag: 999,
             avatarUrl: 'tier1/avatar1.png'
         });
-        admin.save();
-        winston.info('admin added');
+        admin.save(function(err){
+            if(err){
+                console.log(err);
+            } else {
+                winston.info('admin added');
+            }
+        });
     } catch (err) {
         winston.info('admin not added');
         handleError(err);
@@ -179,7 +187,7 @@ function createAdmin(name, mail, pwd) {
 
 function createUser(name, mail) {
     try {
-        var user = {
+        let user = {
             "username": name,
             "email": mail,
             "dateTimePref": "dd/mm/yyyy",

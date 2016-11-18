@@ -2,8 +2,8 @@
  * Created by Jens on 26-Oct-16.
  */
 "use strict";
-var BaseController = require('../../util/bases/basecontroller');
-var Model = require('./model');
+const BaseController = require('../../util/bases/basecontroller');
+const Model = require('./model');
 
 class AchievementController extends BaseController {
 

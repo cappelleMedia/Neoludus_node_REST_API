@@ -12,7 +12,6 @@ class AvatarController extends BaseController {
     }
 
     addObj(data, callback) {
-        //FIXME add 'save image' first here?
         //IF an avatar with this image already exists -> tell it already is present
         let me = this;
         super.addObj(data, function (err, avatar) {

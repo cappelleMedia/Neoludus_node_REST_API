@@ -1,10 +1,13 @@
 /**
  * Created by Jens on 19-Oct-16.
  */
-"user strict"
+const Authenticator = require('../../users/user/authenticator');
+
 class BaseController {
     constructor(model) {
         this.model = model;
+        //FIXME too much to create an authenticator for each controller?
+        this.authenticator = Authenticator;
     }
 
     addObj(data, callback) {
@@ -14,7 +17,7 @@ class BaseController {
         newObj = new this.model(data);
         newObj.save(function (err) {
             if (err) {
-                if(err.name === 'ValidationError'){
+                if (err.name === 'ValidationError') {
                     validationErrors = me.handleValidationErrors(err);
                 }
                 return callback(err, 400, validationErrors);
@@ -49,6 +52,7 @@ class BaseController {
             });
     }
 
+    //TODO VERIFY ADMIN BEFORE UPDATE
     updateObj(id, updated, callback) {
         let me = this;
         this.getOne(id, function (err, found) {
@@ -69,17 +73,40 @@ class BaseController {
         });
     }
 
-    deleteObj(id, callback) {
-        this.model
-            .findByIdAndRemove(id)
-            .exec(function (err) {
-                callback(err, id);
-            });
+    deleteObj(id, token, callback) {
+        let me = this;
+        if (token) {
+            this.authenticator.verifyAdmin(token, function (err, valid) {
+                if (valid === "verified") {
+                    me.model
+                        .findByIdAndRemove(id)
+                        .exec(function (err, obj) {
+                            if (!obj) {
+                                obj = 404;
+                            }
+                            callback(err, obj);
+                        });
+                } else {
+                    callback(401, 401);
+                }
+            })
+        } else {
+            callback(401, 401);
+        }
+
     }
 
-    handleValidationErrors(err){
-        //should be overwritten by all subs
-        throw TypeError('not implemented, should be implemented by subclass');
+    handleValidationErrors(err) {
+        console.log('should be overridden by subclass');
+        console.log(err);
+        //should be overridden by all subs
+        // throw TypeError('not implemented, should be implemented by subclass');
+    }
+
+    verifyAdmin(jwt, callback) {
+        this.authenticator.verifyAdmin(jwt, function (err, result) {
+            BaseController.getResult(err, result, callback);
+        })
     }
 
     static getResult(err, value, callback) {

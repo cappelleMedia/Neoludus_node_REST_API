@@ -1,8 +1,8 @@
 /**
  * Created by Jens on 27-Oct-16.
  */
-var BaseController = require('../../util/bases/basecontroller');
-var Model = require('./model');
+const BaseController = require('../../util/bases/basecontroller');
+const Model = require('./model');
 
 class UserRoleController extends BaseController {
 

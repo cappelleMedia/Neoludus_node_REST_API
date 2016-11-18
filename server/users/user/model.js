@@ -1,14 +1,17 @@
 /**
  * Created by Jens on 11-Oct-16.
  */
-var mongoose = require('mongoose');
-var config = require('../../config/index');
-var UserHelpClass = require('./userhelper');
-var UserHelp = new UserHelpClass();
-var Achievement = require('../achievement/model');
-var uniqueValidation = require('mongoose-beautiful-unique-validation');
+const mongoose = require('mongoose');
+const uniqueValidation = require('mongoose-beautiful-unique-validation');
+
+const config = require('../../config/index');
+const UserHelp = require('./userhelper');
+const Achievement = require('../achievement/model');
+
+let userHelp = new UserHelp();
+
 //MAIN
-var UserSchema = new mongoose.Schema({
+let UserSchema = new mongoose.Schema({
     __v: {
         type: Number
     },
@@ -17,7 +20,7 @@ var UserSchema = new mongoose.Schema({
         required: true,
         index: true,
         unique: 'This username is already taken',
-        validate: UserHelp.getUsernameValidators()
+        validate: userHelp.getUsernameValidators()
     },
     email: {
         type: String,
@@ -25,26 +28,27 @@ var UserSchema = new mongoose.Schema({
         index: true,
         lowercase: true,
         unique: 'This email is already in use',
-        validate: UserHelp.getEmailValidators()
+        validate: userHelp.getEmailValidators()
     },
     password: {
         type: String,
         required: true,
         select: false,
-        default: UserHelp.generateRegKey(64),
-        validate: UserHelp.getPasswordValidators()
+        default: userHelp.generateRegKey(64),
+        validate: userHelp.getPasswordValidators()
     },
     regKey: {
         type: String,
         required: true,
+        select: false,
         min: 64,
         max: 64,
-        default: UserHelp.generateRegKey(64)
+        default: userHelp.generateRegKey(64)
     },
     dateTimePref: {
         type: String,
         required: true,
-        validate: UserHelp.getDateTimeValidators()
+        validate: userHelp.getDateTimeValidators()
     },
     creation: {
         type: Date,
@@ -63,7 +67,8 @@ var UserSchema = new mongoose.Schema({
     },
     accessFlag: {
         type: Number,
-        required: true
+        required: true,
+        default: -999
     },
     avatarUrl: {
         type: String,
@@ -96,13 +101,23 @@ var UserSchema = new mongoose.Schema({
 UserSchema.plugin(uniqueValidation);
 
 //METHODS
-
+UserSchema.methods.toTokenData = function () {
+    var tokenData = {
+        _id: this._id,
+        username: this.username,
+        email: this.username,
+        avatarUrl: this.avatarUrl,
+        dateTimePref: this.dateTimePref,
+        accessFlag: this.accessFlag
+    };
+    return tokenData;
+};
 // PRE'S
 UserSchema.post('validate', function () {
     if (this.isModified('password')) {
-        this.password = UserHelp.encryptPwd(this.password);
+        this.password = userHelp.encryptPwd(this.password);
     }
-    this.regKey = UserHelp.generateRegKey(64);
+    this.regKey = userHelp.generateRegKey(64);
 });
 
 //EXPORTS

@@ -1,14 +1,15 @@
 /**
  * Created by Jens on 12-Oct-16.
  */
-var winston = require('winston');
-var ControllerClass = require('./controller');
-var helper = require('../../util/routerHelper');
+const winston = require('winston');
+
+const Controller = require('./controller');
+const helper = require('../../util/routerHelper');
 
 module.exports = function (app, base) {
-    var controller = new ControllerClass();
+    let controller = new Controller();
 
-    //BASE ROUTE OVERWRITES AND ADDONS
+    //BASE ROUTE OVERRIDES AND ADDONS
     app.post(base, function (req, res) {
         controller.registerUser(req.body, function (err, response, validationResult) {
             helper.respond(err, response, res, validationResult);
@@ -35,9 +36,23 @@ module.exports = function (app, base) {
         });
     });
 
+    app.post(base + '/verifyAdmin', function (req, res) {
+        controller.verifyAdmin(req.body.token, function (err, response) {
+            helper.respond(err, response, res);
+        });
+    });
+
     //TODO passwordUpdate (check regkey + new passwords)
     //TODO passwordReset (mail)
 
     //BASE ROUTES
     require('../../util/bases/baserouter')(app, base, controller);
+
+
+    //FIXME THIS IS FOR TESTING ONLY, BEWARE
+    app.get(base + '/dev/adminToken', function (req, res) {
+        controller.getAdminToken(function (err, response) {
+            helper.respond(err, response, res);
+        })
+    });
 };

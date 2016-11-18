@@ -1,11 +1,12 @@
 /**
  * Created by Jens on 17-Oct-16.
  */
-var mongoose = require("mongoose");
-var config = require("../../config/index");
+const mongoose = require("mongoose");
+
+const config = require("../../config/index");
 
 //MAIN
-var UserRoleSchema = new mongoose.Schema({
+let UserRoleSchema = new mongoose.Schema({
     displayName: {
         type: String,
         require: true,
@@ -31,7 +32,7 @@ var UserRoleSchema = new mongoose.Schema({
 
 //STATICS
 //FIXME move to Controller
-UserRoleSchema.statics.findByFlag = function(flag, callback){
+UserRoleSchema.statics.findByFlag = function (flag, callback) {
     return this.findOne({accessFlag: flag}, callback);
 };
 

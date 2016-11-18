@@ -1,29 +1,15 @@
 /**
  * Created by Jens on 11-Oct-16.
  */
-var pwdChecker = require('zxcvbn');
-var bcrypt = require('bcrypt-nodejs');
-var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-var crypto = require('crypto');
-var validator = require('validator');
-//FIXME MOVE HIGHER UP
-var validationConfig = {
-    'usernameMinLength': 4,
-    'usernameMaxLength': 20,
-    'reservedUsernames': [
-        'admin',
-        'super',
-        'boss',
-        'jens',
-        'souf'
-    ],
-    'dateTimePrefs': [
-        'dd/mm/yyyy',
-        'mm/dd/yyyy',
-        'yyyy/mm/dd'
-    ]
+const pwdChecker = require('zxcvbn');
+const bcrypt = require('bcrypt-nodejs');
+const crypto = require('crypto');
+const masterValidator = require('validator');
 
-}
+const config = require('../../config');
+
+let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let validationConfig = config.validationConfig;
 
 class UserHelper {
 
@@ -54,7 +40,7 @@ class UserHelper {
         return validators;
     }
 
-    getEmailValidators(){
+    getEmailValidators() {
         let validators = [
             {
                 validator: this.isEmailValidator,
@@ -64,10 +50,10 @@ class UserHelper {
         return validators;
     }
 
-    getDateTimeValidators(){
+    getDateTimeValidators() {
         let validators = [
             {
-                validator : this.isValidDateFormat,
+                validator: this.isValidDateFormat,
                 msg: 'This is not a valid date format'
             }
         ];
@@ -81,33 +67,35 @@ class UserHelper {
 
     //USERNAME VALIDATION RULES
     usernameLengthValidator(username) {
-        return validator.isLength(username, {min: validationConfig.usernameMinLength, max: validationConfig.usernameMaxLength});
+        return masterValidator.isLength(username, {
+            min: validationConfig.usernameMinLength,
+            max: validationConfig.usernameMaxLength
+        });
     }
 
     isUsernameAllowed(username) {
-        return !validator.isIn(username, validationConfig.reservedUsernames);
+        return !masterValidator.isIn(username, validationConfig.reservedUsernames);
     }
 
     //EMAIL VALIDATORS
-    isEmailValidator(email){
-        return validator.isEmail(email);
+    isEmailValidator(email) {
+        return masterValidator.isEmail(email);
     }
 
     //DATE VALIDATORS
-    isValidDateFormat(dateFormat){
-        return validator.isIn(dateFormat, validationConfig.dateTimePrefs);
+    isValidDateFormat(dateFormat) {
+        return masterValidator.isIn(dateFormat, validationConfig.dateTimePrefs);
     }
 
     encryptPwd(password) {
-        console.log('encrypting');
-        var pwdEnc = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+        let pwdEnc = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
         return pwdEnc;
     }
 
     generateRegKey(length) {
         let bytes = crypto.randomBytes(length);
         let result = new Array(length);
-        for (var i = 0, j = length; i < j; i++)
+        for (let i = 0, j = length; i < j; i++)
             result[i] = chars[bytes[i] % chars.length];
         return result.join('');
     }

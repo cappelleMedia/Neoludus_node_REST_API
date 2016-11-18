@@ -2,13 +2,16 @@
  * Created by Jens on 12-Oct-16.
  */
 "use strict"
-var BaseController = require('../../util/bases/basecontroller');
-var Model = require('./model');
-var Mailer = require('../../util/mailing/mailer');
-var async = require('async');
-var config = require('../../config/index');
-var jwt = require('jsonwebtoken');
+const async = require('async');
 
+const BaseController = require('../../util/bases/basecontroller');
+const Model = require('./model');
+const Mailer = require('../../util/mailing/mailer');
+const config = require('../../config/index');
+
+
+//TODO null and empty checks
+//TODO OVERRIDE UPDATE FUNCTION WITH PW FOR VERIFICATION
 class UserController extends BaseController {
     constructor(model = Model) {
         super(model);
@@ -19,7 +22,7 @@ class UserController extends BaseController {
         let me = this;
         async.waterfall([
             function (next) {
-                var newUser = null;
+                let newUser = null;
                 data.accessFlag = -999;
                 newUser = new Model(data);
                 newUser.save(function (err) {
@@ -65,30 +68,33 @@ class UserController extends BaseController {
                 if (!data._id || !data.regKey || !data.password || !data.passwordRepeat) {
                     errors['dev'] = 'Request was missing important information';
                     status = 400;
-                    next(status, status);
+                    return next(status);
                 } else {
-                    me.getOne(data._id, function (err, val) {
-                        next(err, val);
-                    });
+                    me.model
+                        .findById(data._id)
+                        .select('+regKey')
+                        .exec(function (err, obj) {
+                            next(err, obj);
+                        });
                 }
             },
             function (user, next) {
-                if(user.accessFlag > 0){
+                if (user.accessFlag > 0) {
                     //Already activated
                     status = 401;
                     errors = null
-                    next(status);
+                    return next(status);
                 }
                 if ((user.regKey !== data.regKey)) {
                     //hide the error here
                     status = 401;
                     errors = null;
-                    next(status, status);
+                    return next(status);
                 }
                 if (data.password !== data.passwordRepeat) {
                     status = 400;
                     errors['dev'] = 'Password and password repeat did not match';
-                    next(status, status);
+                    return next(status);
                 }
                 user.accessFlag = 1;
                 user.password = data.password;
@@ -97,7 +103,7 @@ class UserController extends BaseController {
             function (updatedUser, done) {
                 me.updateObj(updatedUser._id, updatedUser, function (err, user, validationErrors) {
                     errors = validationErrors;
-                    status = user;
+                    status = user.toTokenData();
                     done(err)
                 });
             }
@@ -105,11 +111,6 @@ class UserController extends BaseController {
         ], function (err) {
             callback(err, status, errors);
         });
-    }
-
-    authenticate(identifier, pwd, callback) {
-        //TODO IMPLEMENT
-        return callback(null, 501);
     }
 
 
@@ -147,6 +148,30 @@ class UserController extends BaseController {
         return errorsAll;
     }
 
+    //SECURITY AND ACCOUNT
+    authenticate(identifier, pwd, callback) {
+        this.authenticator.authenticate(identifier, pwd, function (err, result) {
+            BaseController.getResult(err, result, callback);
+        });
+    }
+
+    //FIXME THIS IS FOR TESTING ONLY, BEWARE
+    getAdminToken(callback) {
+        let me = this;
+        if (process.env.NODE_ENV !== 'production') {
+            this.getUserByName('devAdmin', function (err, admin) {
+                if (err || !isNaN(admin)) {
+                    BaseController.getResult(err, admin, callback);
+                } else {
+                    me.authenticator.getAdminToken(admin, function (err, result) {
+                        BaseController.getResult(err, result, callback);
+                    });
+                }
+            });
+        } else {
+            return callback(null, 401);
+        }
+    }
 }
 
 module.exports = UserController;
