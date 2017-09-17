@@ -38,7 +38,7 @@ class Mailer {
 
     sendFromTemplate(type, mailOpt, callback) {
         let emailTemplate = emailTemplates.EmailTemplate;
-        let me = this;
+        let self = this;
         let templateDir = this.getTemplateDir(type, mailOpt);
         if (templateDir) {
             let template = new emailTemplate(templateDir);
@@ -48,7 +48,7 @@ class Mailer {
                 } else {
                     mailOpt.html = results.html;
                     mailOpt.text = results.text;
-                    me.transporter.sendMail(mailOpt, function (err, responseStatus) {
+                    self.transporter.sendMail(mailOpt, function (err, responseStatus) {
                         if (err) {
                             callback(err);
                         } else {

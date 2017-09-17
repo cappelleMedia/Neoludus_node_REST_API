@@ -11,14 +11,14 @@ class BaseController {
     }
 
     addObj(data, callback) {
-        let me = this;
+        let self = this;
         let validationErrors = "";
         let newObj = null;
         newObj = new this.model(data);
         newObj.save(function (err) {
             if (err) {
                 if (err.name === 'ValidationError') {
-                    validationErrors = me.handleValidationErrors(err);
+                    validationErrors = self.handleValidationErrors(err);
                 }
                 return callback(err, 400, validationErrors);
             }
@@ -54,17 +54,17 @@ class BaseController {
 
     //TODO VERIFY ADMIN BEFORE UPDATE
     updateObj(id, updated, callback) {
-        let me = this;
+        let self = this;
         this.getOne(id, function (err, found) {
             if (!isNaN(found)) {
                 callback(err, found);
             } else {
                 Object.assign(found, updated);
-                me.addObj(found, function (err, result) {
+                self.addObj(found, function (err, result) {
                     let errors = null;
                     if (err) {
                         if (err.name === "ValidationError") {
-                            errors = me.handleValidationErrors(err);
+                            errors = self.handleValidationErrors(err);
                         }
                     }
                     callback(err, result, errors);
@@ -74,11 +74,11 @@ class BaseController {
     }
 
     deleteObj(id, token, callback) {
-        let me = this;
+        let self = this;
         if (token) {
             this.authenticator.verifyAdmin(token, function (err, valid) {
                 if (valid === "verified") {
-                    me.model
+                    self.model
                         .findByIdAndRemove(id)
                         .exec(function (err, obj) {
                             if (!obj) {

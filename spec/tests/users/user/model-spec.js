@@ -32,7 +32,7 @@ beforeAll(function (done) {
 });
 
 describe("UserCreation", function () {
-    it("User should be created and have a fields generated", function () {
+    it("Should create a User and have a fields generated", function () {
         let userData = {
             "username": usernameAccepted,
             "email": emailAccepted,
@@ -61,7 +61,7 @@ describe("UserCreation", function () {
 
 describe("UserSave", function () {
     let userData = {};
-    it("Save should throw error if username is missing", function (done) {
+    it("Should throw error if username is missing", function (done) {
         userData = {
             "email": emailAccepted,
             "dateTimePref": dateTimePrefAccepted,
@@ -77,7 +77,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if username is too short", function (done) {
+    it("Should throw error if username is too short", function (done) {
         userData = {
             "username": "ts",
             "email": emailAccepted,
@@ -94,7 +94,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if username is too long", function (done) {
+    it("Should throw error if username is too long", function (done) {
         userData = {
             "username": "ThisUsernameIsWayToLongForTheUsernameFieldWeCanNotAcceptThatSoThrowAnError",
             "email": emailAccepted,
@@ -111,7 +111,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if username is already in use", function (done) {
+    it("Should throw error if username is already in use", function (done) {
         let userData = {
             "username": "duplicateName",
             "email": emailAccepted,
@@ -138,7 +138,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if username is reserved", function (done) {
+    it("Should throw error if username is reserved", function (done) {
         userData = {
             "username": config.validationConfig.reservedUsernames[0],
             "email": emailAccepted,
@@ -155,7 +155,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if email is missing", function (done) {
+    it("Should throw error if email is missing", function (done) {
         userData = {
             "username": usernameAccepted,
             "dateTimePref": dateTimePrefAccepted,
@@ -171,7 +171,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if email is already in use", function (done) {
+    it("Should throw error if email is already in use", function (done) {
         let userData = {
             "username": usernameAccepted,
             "email": "duplicateEmail@mail.com",
@@ -197,7 +197,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if email is not a valid email", function (done) {
+    it("Should throw error if email is not a valid email", function (done) {
         let invalidMailUsers = [];
         userData = {
             "username": usernameAccepted,
@@ -251,7 +251,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if dateTimePref is missing", function (done) {
+    it("Should throw error if dateTimePref is missing", function (done) {
         userData = {
             "username": usernameAccepted,
             "email": emailAccepted,
@@ -267,7 +267,7 @@ describe("UserSave", function () {
         });
     });
 
-    it("Save should throw error if dateTimePref is invalid option", function (done) {
+    it("Should throw error if dateTimePref is invalid option", function (done) {
         userData = {
             "username": usernameAccepted,
             "email": emailAccepted,
@@ -293,11 +293,12 @@ describe("UserSave", function () {
             savedIds.push(validUser._id);
             UserModel
                 .findById(validUser._id)
-                .select('+regKey')
+                .select('+regKey +password')
                 .exec(function (err, userResult) {
                     expect(userResult).not.toBeNull();
                     expect(userResult).toBeDefined();
                     expect(userResult.username).toEqual(validUser.username);
+                    expect(userResult.password).toEqual(validUser.password);
                     expect(userResult.email).toEqual(validUser.email);
                     expect(userResult.regKey).toEqual(validUser.regKey);
                     expect(userResult.dateTimePref).toEqual(validUser.dateTimePref);
@@ -312,6 +313,12 @@ describe("UserSave", function () {
     afterEach(function (done) {
         clean(done);
     });
+});
+
+describe("UserUpdate", function () {
+    //should error if name exists and other id
+    //should error if mail exists and other id
+    //should error if invalid name, mail, pwd,
 });
 
 function clean(done) {

@@ -19,7 +19,7 @@ class UserController extends BaseController {
     }
 
     registerUser(data, callback) {
-        let me = this;
+        let self = this;
         async.waterfall([
             function (next) {
                 let newUser = null;
@@ -41,7 +41,7 @@ class UserController extends BaseController {
                     subject: 'Neoludus activation',
                     activationUrl: activationUrl
                 };
-                me.mailer.sendFromTemplate('activation', mailOpts, function (err) {
+                self.mailer.sendFromTemplate('activation', mailOpts, function (err) {
                     done(err, user);
                 });
             }
@@ -50,7 +50,7 @@ class UserController extends BaseController {
             let errors = null;
             if (err) {
                 if (err.name === "ValidationError") {
-                    errors = me.handleValidationErrors(err);
+                    errors = self.handleValidationErrors(err);
                 }
                 Model.findByIdAndRemove(user._id).exec(function (err) {
                 });
@@ -60,7 +60,7 @@ class UserController extends BaseController {
     }
 
     activate(data, callback) {
-        let me = this;
+        let self = this;
         let errors = {};
         let status = 500;
         async.waterfall([
@@ -70,7 +70,7 @@ class UserController extends BaseController {
                     status = 400;
                     return next(status);
                 } else {
-                    me.model
+                    self.model
                         .findById(data._id)
                         .select('+regKey')
                         .exec(function (err, obj) {
@@ -101,7 +101,7 @@ class UserController extends BaseController {
                 next(null, user);
             },
             function (updatedUser, done) {
-                me.updateObj(updatedUser._id, updatedUser, function (err, user, validationErrors) {
+                self.updateObj(updatedUser._id, updatedUser, function (err, user, validationErrors) {
                     errors = validationErrors;
                     status = user.toTokenData();
                     done(err)
@@ -157,13 +157,13 @@ class UserController extends BaseController {
 
     //FIXME THIS IS FOR TESTING ONLY, BEWARE
     getAdminToken(callback) {
-        let me = this;
+        let self = this;
         if (process.env.NODE_ENV !== 'production') {
             this.getUserByName('devAdmin', function (err, admin) {
                 if (err || !isNaN(admin)) {
                     BaseController.getResult(err, admin, callback);
                 } else {
-                    me.authenticator.getAdminToken(admin, function (err, result) {
+                    self.authenticator.getAdminToken(admin, function (err, result) {
                         BaseController.getResult(err, result, callback);
                     });
                 }
