@@ -7,6 +7,7 @@ const uniqueValidation = require('mongoose-beautiful-unique-validation');
 const config = require('../../config/index');
 const UserHelp = require('./userhelper');
 const Achievement = require('../achievement/model');
+// FIXME: use user role in stead of accessFlag const UserRole = require('../userrole/model');
 
 let userHelp = new UserHelp();
 
