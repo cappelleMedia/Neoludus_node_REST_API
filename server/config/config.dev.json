@@ -1,21 +1,10 @@
 {
   "mongo": {
-    "autoIndex": true,
-    "uri": "mongodb://localhost/neoludus",
-    "options": {
-      "server": {
-        "autoreconnect": true
-      }
-    }
+    "uri": "mongodb://localhost/neoludus"
   },
   "basepaths": {
     "serverUrl": "localhost:3001",
-    "clientUrl": "localhost:3000",
-    "achievements": "assets/images/achievements",
-    "avatars": "assets/images/avatar",
-    "designs": "assets/images/designs",
-    "newsfeed": "assets/images/newsfeed",
-    "reviews": "assets/images/reviews"
+    "clientUrl": "localhost:3000"
   },
   "smtpConfig": {
     "port": "1025",
@@ -23,39 +12,8 @@
     "debug": true
   },
   "cors": {
-    "exposedHeaders": [
-      "X-Total-Count"
-    ],
     "origins": [
       "localhost:3000$"
-    ]
-  },
-  "jwt": {
-    "activation": {
-      "expiresIn": "1h",
-      "issuer": "neoludus:activation",
-      "secret": ">PQo6b3^9gMH8MJcw%Pv:H9D"
-    },
-    "auth": {
-      "expiresIn": "1h",
-      "issuer": "neoludus:auth",
-      "secret": ">PQo6b3^9gMH8MJcw%Pv:H9D"
-    }
-  },
-  "validationConfig": {
-    "usernameMinLength": 4,
-    "usernameMaxLength": 15,
-    "reservedUsernames": [
-      "admin",
-      "super",
-      "root",
-      "jens",
-      "souf"
-    ],
-    "dateTimePrefs": [
-      "dd/mm/yyyy",
-      "mm/dd/yyyy",
-      "yyyy/mm/dd"
     ]
   }
 }

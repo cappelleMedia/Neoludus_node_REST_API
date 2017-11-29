@@ -1,18 +1,5 @@
 {
   "mongo": {
-    "autoIndex": true,
-    "uri": "mongodb://localhost/neoludus",
-    "options": {
-      "server": {
-        "autoreconnect": true
-      }
-    }
-  },
-  "basepaths": {
-    "achievements": "assets/images/achievements",
-    "avatars": "assets/images/avatar",
-    "designs": "assets/images/designs",
-    "newsfeed": "assets/images/newsfeed",
-    "reviews": "assets/images/reviews"
+    "uri": "mongodb://localhost/neoludus"
   }
 }
